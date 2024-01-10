@@ -5,6 +5,8 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - Lifecycle
     
+    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet weak var noButton: UIButton!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -56,6 +58,7 @@ final class MovieQuizViewController: UIViewController {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questions.count - 1 { // 1
+            buttonsEnabled(isEnabled: true)
             let text = "\(resultText) \(correctAnswers)/10" // 1
                     let viewModel = QuizResultsViewModel( // 2
                         title: self.resultTitleText,
@@ -67,6 +70,7 @@ final class MovieQuizViewController: UIViewController {
             let nextQuestion = questions[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
             show(quiz: viewModel)
+            buttonsEnabled(isEnabled: true)
         }
     }
     
@@ -76,9 +80,15 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.cornerRadius = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         correctAnswers = isCorrect ? correctAnswers + 1 : correctAnswers
+        buttonsEnabled(isEnabled: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.showNextQuestionOrResults()
             }
+    }
+    
+    private func buttonsEnabled(isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
     }
     
     @IBAction private func yesButtonClicked(_ sender: Any) {
