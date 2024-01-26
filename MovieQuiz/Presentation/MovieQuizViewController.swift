@@ -14,8 +14,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
     private var allertPresenter: AllertPresenterProtocol = AllertPresenter()
+    private var statisticService: StatisticService = StatisticServiceImplementation()
     private var currentQuestion: QuizQuestion?
     private var correctAnswers = 0
+    private let gamesCountText: String = "Количество сыгранных квизов:"
     
     // MARK: - Lifecycle
     
@@ -25,6 +27,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         allertPresenter.delegate = self
         questionFactory.requestNextQuestion()
     }
+    
+
     
     // MARK: - QuestionFactoryDelegate
 
@@ -42,9 +46,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - AllertPresenterDelegate
     
     func showAllert(quiz result: AllertModel) {
+        statisticService.store(correct: correctAnswers, total: questionsAmount)
+        let gameCountMessage = "\(gamesCountText) \(statisticService.gamesCount)\n"
+        let recordMessage = "Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))\n"
+        let totalAcuracyMessage = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        let newMessage = result.message + gameCountMessage + recordMessage + totalAcuracyMessage
         let alert = UIAlertController(
             title: result.title,
-            message: result.message,
+            message: newMessage,
             preferredStyle: .alert)
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }

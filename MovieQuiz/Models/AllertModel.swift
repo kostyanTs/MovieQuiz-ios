@@ -10,6 +10,6 @@ import Foundation
 
 struct AllertModel {
     let title: String
-    let message: String
+    var message: String
     let buttonText: String
 }
