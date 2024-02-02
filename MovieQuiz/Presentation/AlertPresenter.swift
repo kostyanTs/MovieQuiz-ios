@@ -8,7 +8,7 @@
 import UIKit
 
 
-class AllertPresenter: UIViewController, AllertPresenterProtocol{
+final class AllertPresenter: UIViewController, AllertPresenterProtocol{
   
     var delegate: AllertPresenterDelegate?
     private let buttonText: String = "Сыграть еще раз"
