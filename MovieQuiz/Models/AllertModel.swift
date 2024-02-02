@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct AllertModel {
     let title: String
     var message: String

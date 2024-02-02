@@ -1,6 +1,5 @@
 import UIKit
 
-
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AllertPresenterDelegate {
 
     // MARK: - Private outlets

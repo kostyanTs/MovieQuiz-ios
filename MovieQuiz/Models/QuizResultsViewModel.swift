@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct QuizResultsViewModel {
   // строка с заголовком алерта
   let title: String

@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 protocol AllertPresenterDelegate: AnyObject {
     func showAllert(quiz result: AllertModel)
 }

@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 protocol AllertPresenterProtocol {
     var delegate: AllertPresenterDelegate?{ get set }
     func createAllertModel(correctAnswers: Int) -> AllertModel

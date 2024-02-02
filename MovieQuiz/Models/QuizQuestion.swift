@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct QuizQuestion {
   // строка с названием фильма,
   // совпадает с названием картинки афиши фильма в Assets

@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 final class StatisticServiceImplementation: StatisticService {
     
     private let userDefaults = UserDefaults.standard
