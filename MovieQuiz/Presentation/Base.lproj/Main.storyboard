@@ -127,17 +127,23 @@
                                     <constraint firstItem="qtd-gL-S04" firstAttribute="centerX" secondItem="JN7-j1-U7M" secondAttribute="centerX" id="rQr-wn-SvV"/>
                                 </constraints>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Deg-z5-xbW">
+                                <rect key="frame" x="197" y="445" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
+                            <constraint firstItem="Deg-z5-xbW" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="62g-lQ-i3L"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="JN7-j1-U7M" secondAttribute="bottom" id="6UC-gG-ZD2"/>
+                            <constraint firstItem="Deg-z5-xbW" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="7GL-8a-B4f"/>
                             <constraint firstItem="JN7-j1-U7M" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="NjR-qn-ntm"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="JN7-j1-U7M" secondAttribute="trailing" constant="20" id="hIP-3Q-Rcu"/>
                             <constraint firstItem="JN7-j1-U7M" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="nij-hn-Vf4"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="Deg-z5-xbW" id="ADo-eG-lS0"/>
                         <outlet property="counterLabel" destination="BY2-GT-dky" id="eRg-wm-dBc"/>
                         <outlet property="imageView" destination="qtd-gL-S04" id="qHn-cb-Gs0"/>
                         <outlet property="noButton" destination="b2y-Kg-B9n" id="hwA-yI-3iU"/>
