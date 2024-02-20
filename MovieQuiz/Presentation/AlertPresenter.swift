@@ -10,7 +10,7 @@ import UIKit
 final class AllertPresenter: UIViewController, AllertPresenterProtocol{
   
     weak var delegate: AllertPresenterDelegate?
-    private let buttonText: String = "Сыграть еще раз"
+    private let buttonText: String = "Сыграть ещё раз"
     private let resultText: String = "Ваш результат:"
     private let resultTitleText: String = "Этот раунд окончен!"
  

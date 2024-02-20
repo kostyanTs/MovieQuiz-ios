@@ -29,6 +29,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         imageView.layer.cornerRadius = 20
         showLoadingIndicator()
         questionFactory.loadData()
+        counterLabel.accessibilityIdentifier = "Index"
     }
     
     private func showLoadingIndicator() {
@@ -99,6 +100,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             questionFactory.requestNextQuestion()
         }
         alert.addAction(action)
+        alert.view.accessibilityIdentifier = "Game results"
         self.present(alert, animated: true, completion: nil)
     }
     
