@@ -16,8 +16,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory(moviesLoader: MoviesLoader())
     private var allertPresenter: AllertPresenterProtocol = AllertPresenter()
     private var statisticService: StatisticService = StatisticServiceImplementation()
-    private var currentQuestion: QuizQuestion?
-    private var correctAnswers = 0
+//    private var currentQuestion: QuizQuestion?
+//    private var correctAnswers = 0
     private let gamesCountText: String = "Количество сыгранных квизов:"
     
     // MARK: - Lifecycle
@@ -31,6 +31,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         showLoadingIndicator()
         questionFactory.loadData()
         counterLabel.accessibilityIdentifier = "Index"
+        presenter.viewController = self
     }
     
     private func showLoadingIndicator() {
@@ -51,7 +52,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let action = UIAlertAction(title: model.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
             presenter.resetQuestionIndex() 
-            self.correctAnswers = 0
+            presenter.correctAnswers = 0
             questionFactory.requestNextQuestion()
         }
         alert.addAction(action)
@@ -72,20 +73,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - QuestionFactoryDelegate
 
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
-            return
-        }
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
+        presenter.didReceiveNextQuestion(question: question)
     }
     
     // MARK: - AllertPresenterDelegate
     
     func showAllert(quiz result: AllertModel) {
-        statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
+        statisticService.store(correct: presenter.correctAnswers, total: presenter.questionsAmount)
         let gameCountMessage = "\(gamesCountText) \(statisticService.gamesCount)\n"
         let recordMessage = "Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))\n"
         let totalAcuracyMessage = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
@@ -97,7 +91,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
             presenter.resetQuestionIndex()
-            self.correctAnswers = 0
+            presenter.correctAnswers = 0
             questionFactory.requestNextQuestion()
         }
         alert.addAction(action)
@@ -114,7 +108,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
 //            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
 //    }
 
-    private func show(quiz step: QuizStepViewModel) {
+    func show(quiz step: QuizStepViewModel) {
         counterLabel.text = step.questionNumber
         imageView.image = step.image
         textLabel.text = step.question
@@ -122,34 +116,36 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         imageView.layer.cornerRadius = 20
     }
     
-    private func showNextQuestionOrResults() {
-        if presenter.isLastQuestion() { // 1
-            buttonsEnabled(isEnabled: true)
-            let viewModel = allertPresenter.createAllertModel(correctAnswers: correctAnswers)
-            DispatchQueue.main.async { [weak self] in
-                self?.showAllert(quiz: viewModel)
-            }
-        } else { // 2
-            presenter.switchToNextQuestion()
-            self.questionFactory.requestNextQuestion()
-            buttonsEnabled(isEnabled: true)
-        }
-    }
+//    private func showNextQuestionOrResults() {
+//        if presenter.isLastQuestion() { // 1
+//            buttonsEnabled(isEnabled: true)
+//            let viewModel = allertPresenter.createAllertModel(correctAnswers: correctAnswers)
+//            DispatchQueue.main.async { [weak self] in
+//                self?.showAllert(quiz: viewModel)
+//            }
+//        } else { // 2
+//            presenter.switchToNextQuestion()
+//            self.questionFactory.requestNextQuestion()
+//            buttonsEnabled(isEnabled: true)
+//        }
+//    }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.cornerRadius = 20
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        correctAnswers = isCorrect ? correctAnswers + 1 : correctAnswers
+        presenter.correctAnswers = isCorrect ? presenter.correctAnswers + 1 : presenter.correctAnswers
         buttonsEnabled(isEnabled: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
                 guard let self = self else { return }
-                self.showNextQuestionOrResults()
+                self.presenter.correctAnswers = self.presenter.correctAnswers
+                self.presenter.questionFactory = self.questionFactory
+                self.presenter.showNextQuestionOrResults()
             }
     }
     
-    private func buttonsEnabled(isEnabled: Bool) {
+    func buttonsEnabled(isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }
@@ -157,19 +153,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Private Actions
     
     @IBAction private func yesButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        presenter.noButtonClicked()
     }
 }
 
