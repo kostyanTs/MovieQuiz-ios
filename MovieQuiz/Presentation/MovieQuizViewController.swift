@@ -10,8 +10,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    private var currentQuestionIndex = 0
-    private let questionsAmount: Int = 10
+//    private var currentQuestionIndex = 0
+//    private let questionsAmount: Int = 10
+    private var presenter = MovieQuizPresenter()
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory(moviesLoader: MoviesLoader())
     private var allertPresenter: AllertPresenterProtocol = AllertPresenter()
     private var statisticService: StatisticService = StatisticServiceImplementation()
@@ -49,7 +50,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             preferredStyle: .alert)
         let action = UIAlertAction(title: model.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
-            self.currentQuestionIndex = 0
+            presenter.resetQuestionIndex() 
             self.correctAnswers = 0
             questionFactory.requestNextQuestion()
         }
@@ -75,7 +76,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             return
         }
         currentQuestion = question
-        let viewModel = convert(model: question)
+        let viewModel = presenter.convert(model: question)
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
         }
@@ -84,7 +85,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - AllertPresenterDelegate
     
     func showAllert(quiz result: AllertModel) {
-        statisticService.store(correct: correctAnswers, total: questionsAmount)
+        statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
         let gameCountMessage = "\(gamesCountText) \(statisticService.gamesCount)\n"
         let recordMessage = "Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))\n"
         let totalAcuracyMessage = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
@@ -95,7 +96,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             preferredStyle: .alert)
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             guard let self = self else { return }
-            self.currentQuestionIndex = 0
+            presenter.resetQuestionIndex()
             self.correctAnswers = 0
             questionFactory.requestNextQuestion()
         }
@@ -106,12 +107,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // MARK: - Private functions
     
-    private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        return QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
-            question: model.text,
-            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
-    }
+//    private func convert(model: QuizQuestion) -> QuizStepViewModel {
+//        return QuizStepViewModel(
+//            image: UIImage(data: model.image) ?? UIImage(),
+//            question: model.text,
+//            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
+//    }
 
     private func show(quiz step: QuizStepViewModel) {
         counterLabel.text = step.questionNumber
@@ -122,14 +123,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func showNextQuestionOrResults() {
-        if currentQuestionIndex == questionsAmount - 1 { // 1
+        if presenter.isLastQuestion() { // 1
             buttonsEnabled(isEnabled: true)
             let viewModel = allertPresenter.createAllertModel(correctAnswers: correctAnswers)
             DispatchQueue.main.async { [weak self] in
                 self?.showAllert(quiz: viewModel)
             }
         } else { // 2
-            currentQuestionIndex += 1
+            presenter.switchToNextQuestion()
             self.questionFactory.requestNextQuestion()
             buttonsEnabled(isEnabled: true)
         }
