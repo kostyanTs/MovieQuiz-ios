@@ -10,10 +10,10 @@ import UIKit
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private var currentQuestionIndex = 0
-    let questionsAmount: Int = 10
-    var correctAnswers = 0
-    var currentQuestion: QuizQuestion?
-    weak var viewController: MovieQuizViewController?
+    private let questionsAmount: Int = 10
+    private var correctAnswers = 0
+    private var currentQuestion: QuizQuestion?
+    private weak var viewController: MovieQuizViewController?
     private var questionFactory: QuestionFactoryProtocol? = QuestionFactory(moviesLoader: MoviesLoader())
     private var statisticService: StatisticService = StatisticServiceImplementation()
     
@@ -51,7 +51,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         return resultMessage
     }
     
-    func proceedWithAnswerResult(isCorrect: Bool) {
+    private func proceedWithAnswerResult(isCorrect: Bool) {
         DidCorrectAnswer(isCorrectAnswer: isCorrect)
         viewController?.buttonsEnabled(isEnabled: false)
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
@@ -98,7 +98,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func proceedToNextQuestionOrResults() {
+    private func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
             let text = "Вы ответили на \(correctAnswers) из 10 \n попробуйте ещё раз!\n"
             let viewModel = AllertModel(
@@ -114,7 +114,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func  DidCorrectAnswer(isCorrectAnswer: Bool) {
+    private func  DidCorrectAnswer(isCorrectAnswer: Bool) {
         correctAnswers = isCorrectAnswer ? correctAnswers + 1 : correctAnswers
     }
     
@@ -126,7 +126,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         didAnswer(isYes: false)
     }
     
-    func didAnswer(isYes: Bool) {
+    private func didAnswer(isYes: Bool) {
         guard let currentQuestion = currentQuestion else {
             return
         }

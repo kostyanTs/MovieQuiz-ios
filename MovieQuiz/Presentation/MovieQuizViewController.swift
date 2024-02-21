@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, AllertPresenterDelegate {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol, AllertPresenterDelegate {
 
     // MARK: - Private outlets
     
@@ -23,12 +23,11 @@ final class MovieQuizViewController: UIViewController, AllertPresenterDelegate {
         imageView.layer.cornerRadius = 20
         showLoadingIndicator()
         counterLabel.accessibilityIdentifier = "Index"
-        presenter.viewController = self
     }
     
     func showLoadingIndicator() {
-        activityIndicator.isHidden = false // говорим, что индикатор загрузки не скрыт
-        activityIndicator.startAnimating() // включаем анимацию
+        activityIndicator?.isHidden = false // говорим, что индикатор загрузки не скрыт
+        activityIndicator?.startAnimating() // включаем анимацию
     }
     
     func hideLoadingIndicator() {
