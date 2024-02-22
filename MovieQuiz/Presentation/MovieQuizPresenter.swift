@@ -104,7 +104,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             let viewModel = AllertModel(
                 title: "Этот раунд окончен!",
                 message: text,
-                buttonText: "Сыграть ещё раз\n")
+                buttonText: "Сыграть ещё раз")
                 viewController?.showAllert(quiz: viewModel)
             viewController?.buttonsEnabled(isEnabled: true)
         } else { // 2
