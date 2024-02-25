@@ -48,7 +48,6 @@ final class QuestionFactory: QuestionFactoryProtocol {
             }
             let movieRating = movie.rating
             guard let movieRating = movieRating else {
-                let rating = ""
                 return
             }
             let rating = Float(movieRating) ?? 0
